@@ -54,6 +54,26 @@ func DecodeHookExec(
 	}
 }
 
+// ComposeEncodeFieldMapHookFunc creates a single EncodeFieldMapHookFunc that
+// automatically composes multiple EncodeFieldMapHookFunc.
+//
+// The composed funcs are called in order, with the result of the
+// previous transformation.
+func ComposeEncodeFieldMapHookFunc(fs ...EncodeFieldMapHookFunc) EncodeFieldMapHookFunc {
+	return func(oldValue reflect.Value) (newValue reflect.Value, handled bool, err error) {
+		var fhandled bool
+		for _, f := range fs {
+			oldValue, fhandled, err = f(oldValue)
+			handled = handled || fhandled
+			if err != nil {
+				return oldValue, handled, err
+			}
+		}
+		newValue = oldValue
+		return
+	}
+}
+
 // ComposeDecodeHookFunc creates a single DecodeHookFunc that
 // automatically composes multiple DecodeHookFuncs.
 //
