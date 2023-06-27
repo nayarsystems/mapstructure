@@ -1,3 +1,3 @@
-module github.com/mitchellh/mapstructure
+module github.com/nayarsystems/mapstructure
 
 go 1.14
