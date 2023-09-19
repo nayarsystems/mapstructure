@@ -61,11 +61,9 @@ func DecodeHookExec(
 // previous transformation.
 func ComposeEncodeFieldMapHookFunc(fs ...EncodeFieldMapHookFunc) EncodeFieldMapHookFunc {
 	return func(oldValue reflect.Value) (newValue reflect.Value, handled bool, err error) {
-		var fhandled bool
 		for _, f := range fs {
-			oldValue, fhandled, err = f(oldValue)
-			handled = handled || fhandled
-			if err != nil {
+			oldValue, handled, err = f(oldValue)
+			if handled || err != nil {
 				return oldValue, handled, err
 			}
 		}
